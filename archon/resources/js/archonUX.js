@@ -53,11 +53,12 @@ function UXJustgage(view) {
 function UXDimple(view) {
 	var width = view.chart.options.width;
     var height = view.chart.options.height;
+    var margin = view.chart.options.margin;
     if (width == null) { width = "100%"; }
     if (height == null) { height = "100%"; }
     var svg = dimple.newSvg("#" + view.attrs.id, width, height);
     var chart = new dimple.chart(svg);
-    chart.setMargins("30px", "20px", "20px", "20px");
+    chart.setMargins(margin[0], margin[1], margin[2], margin[3]);//"30px", "20px", "20px", "20px");
     
     var xAxis = null;
     var yAxis = null;
@@ -133,7 +134,7 @@ function UXDimple(view) {
     	chart.addColorAxis(view.chart.options.ykey, ["rgba(" + view.chart.options.min_r + "," + view.chart.options.min_g + ",0,0.8)", "rgba(" + view.chart.options.max_r + "," + view.chart.options.max_g + ",0,0.8)"]);
     	break;
     default:
-    	chart.addColorAxis(view.chart.options.ykey, [view.chart.options.color]);
+    	chart.addColorAxis(view.chart.options.ykey, view.chart.options.color);
     	break;
     }
     
@@ -146,20 +147,32 @@ function UXDimple(view) {
     	for (var i=0, series; series=view.chart.series[i]; i++) {
     		var s = chart.addSeries(series.series, dimple.plot.line);
     		s.data = series.datasets;
-    	    s.tooltipFontSize = "12px";
-    	    s.lineMarkers = true;
+    		s.lineMarkers = true;
+    		if (view.chart.options.tooltip == true) { s.tooltipFontSize = "12px"; }
+    		else {
+    			s.addEventHandler("mouseover", null);
+    			s.addEventHandler("mouseleave", null);
+    		}
     	}
     	break;
     case "bar":
 		var s = chart.addSeries("series", dimple.plot.bar);
     	s.data = view.chart.series;
-    	s.tooltipFontSize = "12px";
+    	if (view.chart.options.tooltip == true) { s.tooltipFontSize = "12px"; }
+		else {
+			s.addEventHandler("mouseover", function (e) {});
+			s.addEventHandler("mouseleave", function (e) {});
+		}
     	break;
     case "pie":
     	for (var i=0, series; series=view.chart.series[i]; i++) {
     		var s = chart.addSeries(view.chart.options.xkey, dimple.plot.pie);
     		s.data = series.datasets;
-    	    s.tooltipFontSize = "12px";
+    		if (view.chart.options.tooltip == true) { s.tooltipFontSize = "12px"; }
+    		else {
+    			s.addEventHandler("mouseover", null);
+    			s.addEventHandler("mouseleave", null);
+    		}
     	}
     	break;
     case "donut":
@@ -172,7 +185,11 @@ function UXDimple(view) {
     		s.innerRadius = size;
     		size = size - sub_size;
     		s.data = series.datasets;
-    	    s.tooltipFontSize = "12px";
+    		if (view.chart.options.tooltip == true) { s.tooltipFontSize = "12px"; }
+    		else {
+    			s.addEventHandler("mouseover", null);
+    			s.addEventHandler("mouseleave", null);
+    		}
     	}
     	break;
     }

@@ -55,6 +55,7 @@ class Chart:
             VIEW.__init__(self, 'DIV', **{'id' : VIEW.getUUID(), 'lib' : 'dimple'})
             if 'width' not in options: options['width'] = None              # None : auto, else : fixed
             if 'height' not in options: options['height'] = None            # None : auto, else : fixed
+            if 'margin' not in options: options['margin'] = ['30px', '20px', '20px', '20px']
             if 'min' not in options: options['min'] = None                  # None : auto, else : fixed
             if 'max' not in options: options['max'] = None                  # None : auto, else : fixed
             if 'xkey' not in options: options['xkey'] = 'X'                 # default : X
@@ -64,6 +65,7 @@ class Chart:
             if 'order' not in options: options['order'] = Chart.ORDER_NON   # ORDER_NON, ORDER_ASC, ORDER_DSC 
             if 'color' not in options: options['color'] = Chart.COLOR_AUTO  # COLOR_AUTO, COLOR_HEALTH, COLOR_UTIL 
             if 'legend' not in options: options['legend'] = False           # True : displayed, False : transparent
+            if 'tooltip' not in options: options['tooltip'] = True          # True : displayed, False : transparent
             if 'pivot' not in options: options['pivot'] = False             # True : pivoted, False : general
             if 'stack' not in options: options['stack'] = False             # True : stacked, False : general
             if 'size' not in options: options['size'] = 10                  # Donut Size

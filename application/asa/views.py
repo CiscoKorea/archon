@@ -47,6 +47,8 @@ def overview(R, M, V):
     health = M.getHealth()
     nats = M.NAT.Detail()
     pools = M.NAT.Pool()
+    nat_count = M.NAT.Count()
+    conn_count = M.Conn.Count()
     
     for domain_name in M:
         chart_hist = Chart.Line(height=145, min=0, max=100, *health['_tstamp'])
@@ -66,6 +68,21 @@ def overview(R, M, V):
                 disk_curr = health[dn][-1]
         chart_curr.Data(V('Current'), cpu_curr, mem_curr, disk_curr)
         
+        chart_conn = Chart.Bar(V('Max'), V('Current'),
+                               height=40, margin=['65px', '0px', '20px', '20px'],
+                               pivot=True, tooltip=False,
+                               color=['rgba(128,177,211,0.8)', 'rgba(255,0,0,0.8)']
+        ).Data(
+            V('Connections'), conn_count[domain_name]['most_used'], conn_count[domain_name]['in_use'], 
+        )
+        
+        chart_tran = Chart.Bar(V('Max'), V('Current'),
+                               height=40, margin=['65px', '0px', '20px', '20px'],
+                               pivot=True, tooltip=False,
+                               color=['rgba(128,177,211,0.8)', 'rgba(255,0,0,0.8)']
+        ).Data(
+            V('NATs'), nat_count[domain_name]['most_used'], nat_count[domain_name]['in_use']
+        )
         
         nat_table = DataTable(V('Config'), V('Mode'), V('From'), V('To'), V('Original'), V('Translate'), V('Trans-Hits'), V('Untrans-Hits'))
         for nat in nats[domain_name]:
@@ -117,7 +134,7 @@ def overview(R, M, V):
                                 STRONG(style='font-size:16px;').html(addr),
                                 rfreg,
                                 STRONG().html(str(pat['total_alloc']) + ' '),
-                                SMALL().html(V('Counts'))
+                                SMALL().html(V('counts'))
                             ),
                             Figure.Donut(pat['total_alloc'], total_free, width=200, height=200, hole=80, **Figure.THEME_UTIL),
                         )
@@ -136,6 +153,15 @@ def overview(R, M, V):
                         HEAD(3, style='margin:0px;').html(V('System Current')),
                         chart_curr
                     )
+                ),
+                HEAD(3, style='margin:0px;').html(V('Counts')),
+                ROW().html(
+                    COL(2, style='padding:5px 0px 0px 0px;').html(HEAD(4, style='margin:0px;text-align:right;').html(V('Connections'))),
+                    COL(10, style='padding:0px;').html(chart_conn)
+                ),
+                ROW().html(
+                    COL(2, style='padding:5px 0px 0px 0px;').html(HEAD(4, style='margin:0px;text-align:right;').html(V('Translations'))),
+                    COL(10, style='padding:0px;').html(chart_tran)
                 ),
                 HEAD(3, style='margin:0px;').html(V('NAT Status')),
                 nat_table,
