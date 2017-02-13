@@ -1,0 +1,6 @@
+Django>1.10
+mysqlclient
+openpyxl
+mysql-python>=1.2.5
+pygics
+acidipy
