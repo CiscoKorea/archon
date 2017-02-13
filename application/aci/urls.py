@@ -48,6 +48,7 @@ url_show = [
     url(r'^endpoint/?', views.endpoint, name=u'엔드포인트'),
     url(r'^contract/?', views.contract, name=u'컨트랙'),
     url(r'^external/?', views.external, name=u'외부네트워크'),
+    url(r'^mcast/?', views.multicast, name=u'멀티캐스트'),
     url(r'^fault/?', views.fault, name=u'오류')
 ]
 

@@ -43,3 +43,4 @@ from endpoint import *
 from contract import *
 from external import *
 from fault import *
+from multicast import *

@@ -279,6 +279,13 @@ def fault(R, M, V):
         else: fault_all(R, M, V)
 
 @pageview(Manager)
+def multicast(R, M, V):
+    if not M: V.Page.html(Alert(V('Info'), V('Non-exist APIC Connection'), **{'class' : 'alert-info'})); return
+    if R.Method == 'GET':
+        multicast_all(R, M, V)
+
+
+@pageview(Manager)
 def epg_util(R, M, V):
     if not M: V.Page.html(Alert(V('Info'), V('Non-exist APIC Connection'), **{'class' : 'alert-info'})); return
     domain_name = None
