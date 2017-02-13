@@ -45,7 +45,7 @@ def multicast_all(R, M, V):
     #===========================================================================
     # Logic
     #===========================================================================
-    table = DataTable(V('Group'), V('Source'), V('HW Byte Count'), V('Interface'), V('Assert Metric'))
+    table = DataTable(V('Group_Address'), V('Source'), V('HWByteCnt'), V('Interface'), V('Assert Metric'))
 
     for domain_name in M:
         stats = {}
