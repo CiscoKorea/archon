@@ -72,7 +72,8 @@ def multicast_all(R, M, V):
 
         for grp in stats.keys():
             for src in stats[grp].keys():
-                table.Record(domain_name, grp, src, stats[grp][src]['hwByteCnt'], stats[grp][src]['interface'], stats[grp][src]['assertMetric'])
+                if stats[grp][src].has_key('interface') and stats[grp][src].has_key('assertMetric') :
+                    table.Record(grp, src, stats[grp][src]['hwByteCnt'], stats[grp][src]['interface'], stats[grp][src]['assertMetric'])
 
         #===========================================================================
         # View
