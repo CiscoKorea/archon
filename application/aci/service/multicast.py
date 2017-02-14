@@ -37,6 +37,9 @@
 from archon import *
 from common import *
 
+#specific domain which using multicast 
+MCAST_DOMAIN = ['dc_fabric']
+
 def multicast_all(R, M, V):
     #===========================================================================
     # Get Data
@@ -48,7 +51,7 @@ def multicast_all(R, M, V):
     table = DataTable(V('Group_Address'), V('Source'), V('HWByteCnt'), V('Interface'), V('Assert Metric'))
 
     for domain_name in M:
-        if 'dc' not in domain_name:
+        if domain_name not in MCAST_DOMAIN:
             continue
         pimRoute_data = M[domain_name].Class('pimRoute').list(detail=True, sort=['grp', 'src'])
         stats = {}

@@ -41,8 +41,8 @@ def fault_all(R, M, V):
     #===========================================================================
     # Get Data
     #===========================================================================
-    if len(R.Path) > 3: faults = M.Fault.list(severity=R.Path[3], detail=True, sort='created|desc')
-    else: faults = M.Fault.list(detail=True, sort='created|desc')
+    if len(R.Path) > 3: faults = M.Fault.list(severity=R.Path[3], detail=True, sort='created|desc',page=(0,10))
+    else: faults = M.Fault.list(detail=True, sort='created|desc', page=(0,10))
     
     #===========================================================================
     # Logic
