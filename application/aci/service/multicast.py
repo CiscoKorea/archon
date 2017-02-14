@@ -41,28 +41,31 @@ def multicast_all(R, M, V):
     #===========================================================================
     # Get Data
     #===========================================================================
-    pimRoute_data = M.Class('pimRoute').list(detail=True, sort=['grp', 'src'])
+    # pimRoute_data = M.Class('pimRoute').list(detail=True, sort=['grp', 'src'])
     #===========================================================================
     # Logic
     #===========================================================================
     table = DataTable(V('Group_Address'), V('Source'), V('HWByteCnt'), V('Interface'), V('Assert Metric'))
 
     for domain_name in M:
+        if 'dc' not in domain_name:
+            continue
+        pimRoute_data = M[domain_name].Class('pimRoute').list(detail=True, sort=['grp', 'src'])
         stats = {}
         hw_byte_cnt = 0
-        for route in pimRoute_data[domain_name]:
+        for route in pimRoute_data:
             grp_key = route['grp']
             src_key = route['src']
             hw_byte_cnt = int(route['hwByteCnt']) if route.has_key('hwByteCnt') else 0
             if stats.has_key( grp_key):
-                if stats['grp'].has_key( src_key):
+                if stats[grp_key].has_key( src_key):
                     stats[grp_key][src_key]['hwByteCnt'] = int(stats[grp_key][src_key]['hwByteCnt']) + hw_byte_cnt
                 else:
-                    stats[grp_key][src_key] = src_key
+                    stats[grp_key][src_key] = {}
                     stats[grp_key][src_key]['hwByteCnt'] = hw_byte_cnt
             else:
-                stats[grp_key] = grp_key
-                stats[grp_key][src_key] = src_key
+                stats[grp_key] = {}
+                stats[grp_key][src_key] = {}
                 stats[grp_key][src_key]['hwByteCnt'] = hw_byte_cnt
                 stats[grp_key][src_key]['interface'] = route['iif']
                 stats[grp_key][src_key]['assertMetric'] = route['assertMetric']
