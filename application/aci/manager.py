@@ -43,6 +43,7 @@ import archon
 from archon import *
 from models import *
 from .settings import *
+from acitoolkit.acitoolkit import AppProfile
 
 #===============================================================================
 # Create your manager here.
@@ -72,7 +73,7 @@ class HealthMonitor(pygics.Task):
     def getHealth(self):
         return self.health
     
-    def run(self):
+    def __run__(self):
         now = time.strftime("%H:%M:%S", time.localtime(time.time()))
         
         total, pod, node, tenant, appprof, epg = Burst(
@@ -111,7 +112,7 @@ class HealthMonitor(pygics.Task):
         
         self.health = health
     
-class EndpointTracker(acidipy.SubscribeHandler):
+class EndpointTracker(acidipy.Event):
     
     @classmethod
     def initDatabase(cls):
@@ -166,7 +167,7 @@ class EndpointTracker(acidipy.SubscribeHandler):
                                          start=self.convertTstamp(ep['modTs']),
                                          stop='Active')
             
-    def subscribe(self, status, obj):
+    def handle(self, status, obj):
         if self.manager.debug: print('[Info]Archon:ACI:Manager:EPTracker:%s:%s:%s' % (obj.class_name, status, obj))
         
         sdn = obj['dn'].split('/')
@@ -193,7 +194,7 @@ class EndpointTracker(acidipy.SubscribeHandler):
                                      start=self.convertTstamp(obj['modTs']),
                                      stop='Active')
 
-class Manager(archon.ManagerAbstraction, acidipy.MultiDomain):
+class Manager(acidipy.MultiDomain, archon.ManagerAbstraction):
     
     def __init__(self):
         acidipy.MultiDomain.__init__(self, debug=MANAGER_DEBUG)
@@ -202,7 +203,7 @@ class Manager(archon.ManagerAbstraction, acidipy.MultiDomain):
             ret = acidipy.MultiDomain.addDomain(self, domain.name, domain.controllers, domain.user, domain.password)
             if ret:
                 self[domain.name].eptracker = EndpointTracker(self, domain.name)
-                self[domain.name].Endpoint.subscribe(self[domain.name].eptracker)
+                self[domain.name].Endpoint.event(self[domain.name].eptracker)
         self.healthmon = HealthMonitor(self)
     
     def addDomain(self, domain_name, ip, user, pwd):
@@ -212,7 +213,7 @@ class Manager(archon.ManagerAbstraction, acidipy.MultiDomain):
             if ret:
                 Domain.objects.create(name=domain_name, controllers=ip, user=user, password=pwd)
                 self[domain_name].eptracker = EndpointTracker(self, domain_name)
-                self[domain_name].Endpoint.subscribe(self[domain_name].eptracker)
+                self[domain_name].Endpoint.event(self[domain_name].eptracker)
             return ret
         return False
     
@@ -238,4 +239,3 @@ class Manager(archon.ManagerAbstraction, acidipy.MultiDomain):
             'link' : '/aci/overview',
             'view' : DIV()
         }
-        

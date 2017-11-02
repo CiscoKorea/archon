@@ -59,12 +59,13 @@ def contract_all(R, M, V):
         for ctrt in ctrts[domain_name]:
             ctrt_cnt += 1
             dn = ctrt['dn']
-            path, _, rn = ctrt.rn()
+            path, _, rn = ctrt.ident()
             path = re.sub('(uni/|tn-)', '', path)
             name = PARA().html(SMALL().html(path + '/'), GET('/aci/show/contract/%s/%s' % (domain_name, dn)).html(rn))
             ctrt_subj = ' '
             ctrt_prov = ' '
             ctrt_cons = ' '
+            
             for subj in subjs[domain_name]:
                 if dn in subj['dn']: ctrt_subj += '<p><small>' + subj['name'] + ',&nbsp;</small></p>'
             for prov in provs[domain_name]:
@@ -75,6 +76,7 @@ def contract_all(R, M, V):
                 if dn in cons['dn']:
                     cons_cnt += 1
                     ctrt_cons += '<p><small>' + re.sub('/\w+-', '/', cons['tDn']).replace('uni/', '') + ',&nbsp;</small></p>'
+            
             table.Record(domain_name, name, ctrt['scope'], ctrt_subj, ctrt_prov, ctrt_cons)
     
     #===========================================================================
@@ -87,6 +89,7 @@ def contract_all(R, M, V):
             COL(4).html(COUNTER(V('Consumer'), 'shopping-cart', cons_cnt, CLASS='panel-dgrey'))
         )
     ).html(table)
+    
     V.Menu.html(BUTTON(CLASS='btn-primary').click('/'.join(R.Path)).html(V('Refresh')))
 
 def contract_one(R, M, V):

@@ -49,7 +49,6 @@ def overview(R, M, V):
     #===========================================================================
     # Count Chart
     #===========================================================================
-    
     cnt_nd, cnt_tt, cnt_bd, cnt_epg, cnt_ep, cnt_ft, cnt_ct, cnt_47d, cnt_47g, cnt_fc, cnt_fj, cnt_fn, cnt_fw = Burst(
     )(M.Node.count
     )(M.Tenant.count
@@ -637,11 +636,14 @@ def config(R, M, V):
     table = TABLE.FLIP(V('Domain Name'), V('+APIC IP'), V('+Administrator ID'), V('+Start Connections'), V('+Max Connections'), '')
     
     for domain_name in sorted(M.keys()):
+        
+        print M[domain_name]
+        
         table.Record(domain_name,
                      M[domain_name]['ip'],
-                     M[domain_name]['user'],
+                     M[domain_name]['usr'],
                      M[domain_name]['conns'],
-                     M[domain_name]['conn_max'],
+                     M[domain_name]['max_conns'],
                      DELETE.BUTTON('/aci/conf/%s' % domain_name, V('Delete'), tail=True, CLASS='btn-xs'))
     
     if alert != None: V.Page.html(alert)
